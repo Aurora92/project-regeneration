@@ -8,17 +8,19 @@ import Col from "react-bootstrap/Col";
 import CustomNavbar from '../CustomNavbar';
 import { API } from '../api';
 import Button from "react-bootstrap/Button";
-import { Link } from "react-router-dom";
+import { Link, useParams} from "react-router-dom";
 
 
-const Course = ({resource,format}) => {
+
+const Course = () => {
     
+    let { id } = useParams();
     const [course, setCourse] = useState([]);
     const axios = require("axios");
     useEffect(() => {
         if (course.length === 0) {
             axios
-                .get(`${API}/courses/${resource}?format=${format}`)
+                .get(`${API}/courses/${id}`)
                 .then(function (response) {
                     // handle success
 
@@ -34,7 +36,7 @@ const Course = ({resource,format}) => {
         }
     }, []);
 
-    console.log(resource);
+    console.log(id);
     
 
     return (
@@ -55,7 +57,7 @@ const Course = ({resource,format}) => {
                     <CardDeck>
                         
                             <Card key={course.id}>
-                                <h1>fdf{course.id}</h1>
+                                <h1>show : {course.title}</h1>
                             </Card>
                         
                     </CardDeck>

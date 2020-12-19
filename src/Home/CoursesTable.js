@@ -33,11 +33,7 @@ const CoursesTable = () => {
         }
     }, []);
 
-    Course({
-        resource: idCourse,
-        format: "json"
-    }
-    );
+    
 
     //console.log(Course);
 
@@ -95,7 +91,7 @@ const CoursesTable = () => {
                             {course.dates.start_date} - {course.dates.end_date}
                         </td>
                         <td>
-                            <Button variant="primary" onClick={() => setIdCourse(course.id)}><Link to="/course" style={{
+                            <Button variant="primary" onClick={() => setIdCourse(course.id)}><Link to={`/courses/${course.id}`} style={{
                                 textDecoration: "none", color: "white"
                             }} >View Details</Link></Button>
                         </td>
