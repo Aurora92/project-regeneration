@@ -84,7 +84,7 @@ const Course = () => {
     let name = e.target.name;
     let value = e.target.checked;
     setUpdateCourse({
-      ...updateCourse,
+      ...course,
       [name]: value,
     });
 
@@ -102,7 +102,7 @@ const Course = () => {
     let name = e.target.name;
     let value = e.target.value;
     setUpdateCourse({
-      ...updateCourse,
+      ...course,
       dates: {
         [name]: value,
       },
