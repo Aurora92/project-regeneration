@@ -22,7 +22,7 @@ const CustomNavbar = () => {
                             textDecoration: "none", color: "white"
                         }}>Courses</Link></Nav.Link>
                     <Nav.Link>
-                        <Link to="/Newcourses" style={{
+                        <Link to="/addNewCourse" style={{
                             textDecoration: "none", color: "white"
                         }}>Add new course</Link> </Nav.Link>
                 </Nav>
