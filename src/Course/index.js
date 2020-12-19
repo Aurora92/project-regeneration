@@ -153,7 +153,7 @@ const Course = () => {
   });
 
   return (
-    <Container>
+    <Container fluid>
       <Row className="my-5">
         <Col>
           <CustomNavbar />
@@ -162,19 +162,20 @@ const Course = () => {
       {/* ----------------------------------COURSE INFO----------------------- */}
       <Row>
         <Col>
-          <h1 className="mt-5">{course.title}</h1>
+          <h1>{course.title}</h1>
         </Col>
       </Row>
       <Row>
         <Col>
-          <img src={course.imagePath} />
+          <img src={course.imagePath} style={{width:"100%",height:"300px"}}/>
         </Col>
       </Row>
+      <hr/>
       <Row>
         <Col>
           <h3>Price: {prices.normal} €</h3>
         </Col>
-        <Col>
+        <Col style={{textAlign:"right"}}>
           <h3>Duration: {course.duration}</h3>
         </Col>
       </Row>
@@ -199,7 +200,7 @@ const Course = () => {
             )}
           </h3>
         </Col>
-        <Col>
+        <Col style={{textAlign:"right"}}>
           <h3>
             Dates:{" "}
             <strong>
@@ -210,7 +211,7 @@ const Course = () => {
         </Col>
       </Row>
       <Row>
-        <Col>
+        <Col className="mt-5">
           {" "}
           <div dangerouslySetInnerHTML={{ __html: course.description }} />
         </Col>
@@ -220,7 +221,7 @@ const Course = () => {
           <Button variant="primary" onClick={handleShowEdit}>
             Edit
           </Button>
-          <Button variant="danger" onClick={handleShowDelete}>
+          <Button variant="danger" onClick={handleShowDelete} style={{marginLeft:"5px"}}>
             Delete
           </Button>
           {/* ----------------------------------EDIT COURSE FORM----------------------- */}
@@ -258,6 +259,7 @@ const Course = () => {
                     label="Bookable"
                     name="open"
                     onChange={ckboxHandle}
+                    
                   />
                   <hr />
                 </Form.Group>
@@ -328,22 +330,22 @@ const Course = () => {
       {/* ----------------------------------INSTRUCTORS INFO----------------------- */}
       <Row>
         <Col>
-          <h3>Instructors</h3>
+          <h2>Instructors</h2>
           {instructorsInfo.map((instr) => (
             <Row>
               <Col>
-                <h2>
+                <h3>
                   {instr.name.first +
                     " " +
                     instr.name.last +
-                    "(" +
+                    " (" +
                     instr.dob +
                     ")"}
-                </h2>
-                <h5>
-                  E-mail: {instr.email} | LinkedIn: {instr.linkedin}
-                </h5>
-                <h5>{instr.bio}</h5>
+                </h3>
+                <p>
+                  E-mail: <a href="">{instr.email} </a>| <a href={`${instr.linkedin}`} target="_blank">LinkedIn</a>
+                </p>
+                <p>{instr.bio}</p>
               </Col>
             </Row>
           ))}
