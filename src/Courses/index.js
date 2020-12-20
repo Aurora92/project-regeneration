@@ -36,14 +36,14 @@ const Courses = () => {
     return (
 
         <Container fluid>
-            <Row class="my-5">
+            <Row className="my-5">
                 <Col>
                     <CustomNavbar />
                 </Col>
             </Row>
             <Row>
 
-                <h1 class="mt-5">All Courses</h1>
+                <h1>All Courses</h1>
 
             </Row>
             <Row>

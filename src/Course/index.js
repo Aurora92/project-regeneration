@@ -19,7 +19,7 @@ import { useState, useEffect, setState, prevState } from "react";
 const Course = () => {
   let { id } = useParams();
   const [course, setCourse] = useState([]);
-  const [prices, setPrices] = useState([]);
+  const [price, setPrice] = useState([]);
   const [dates, setDates] = useState([]);
   const [instructors, setInstructors] = useState([]);
   const [instructorsInfo, setInstructorsInfo] = useState([]);
@@ -30,8 +30,8 @@ const Course = () => {
     title: course.title,
     imagePath: course.imagePath,
     price: {
-      normal: prices.normal,
-      early_bird: prices.early_bird,
+      normal: price.normal,
+      early_bird: price.early_bird,
     },
     dates: {
       start_date: dates.start_date,
@@ -53,7 +53,7 @@ const Course = () => {
 
     axios
       .put(`${API}/courses/${id}`, {
-        updateCourse,
+        course,
       })
       .then(function(response) {
         console.log(response);
@@ -61,6 +61,7 @@ const Course = () => {
       .catch(function(error) {
         console.log(error);
       });
+      console.log(course)
   };
 
   const handleDeleteCourse = () => {
@@ -72,20 +73,28 @@ const Course = () => {
   const handleUpdate = (e) => {
     let name = e.target.name;
     let value = e.target.value;
-    setUpdateCourse({
+    setCourse({
       ...course,
       [name]: value,
+      price: {
+        normal: price.normal,
+        early_bird: price.early_bird,
+      },
     });
 
-    console.log(updateCourse);
+    console.log(course);
   };
 
   const ckboxHandle = (e) => {
     let name = e.target.name;
     let value = e.target.checked;
-    setUpdateCourse({
+    setCourse({
       ...course,
       [name]: value,
+      price: {
+        normal: price.normal,
+        early_bird: price.early_bird,
+      },
     });
 
     console.log(updateCourse);
@@ -118,7 +127,7 @@ const Course = () => {
           // handle success
 
           setCourse(response.data);
-          setPrices(response.data.price);
+          setPrice(response.data.price);
           setDates(response.data.dates);
           setInstructors(response.data.instructors);
         })
@@ -172,7 +181,7 @@ const Course = () => {
       </Row>
       <Row>
         <Col>
-          <h3>Price: {prices.normal} €</h3>
+          <h3>Price: {price.normal} €</h3>
         </Col>
         <Col>
           <h3>Duration: {course.duration}</h3>
