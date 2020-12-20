@@ -7,11 +7,14 @@ import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { useState, useEffect, setState, prevState } from "react";
+import { useHistory } from "react-router-dom";
 import { API } from "../api";
+import Modal from "react-bootstrap/Modal";
 
 const AddNewCourse = () => {
-  const [price, setPrice] = useState({normal:"",early_bird:""});
-  const [dates, setDates] = useState({start_date:"",end_date:""});
+  const history = useHistory();
+  const [price, setPrice] = useState({ normal: "", early_bird: "" });
+  const [dates, setDates] = useState({ start_date: "", end_date: "" });
   const [instructors, setInstructors] = useState([]);
   const [instructorsInfo, setInstructorsInfo] = useState([]);
   const [newCourse, setNewCourse] = useState({
@@ -32,7 +35,7 @@ const AddNewCourse = () => {
     description: "",
   });
 
-  
+
   const handleAddCourse = (e) => {
     const axios = require("axios");
 
@@ -54,33 +57,36 @@ const AddNewCourse = () => {
         instructors: instructors,
         description: newCourse.description,
       })
-      .then(function(response) {
+      .then(function (response) {
         console.log(response);
+        handleShow(true);
+
+
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
-    
+
   };
 
-   const handleChange = (event) => {
-     setNewCourse({ ...newCourse, [event.target.name]: event.target.value });
-     console.log(event.target.id);
-   };
+  const handleChange = (event) => {
+    setNewCourse({ ...newCourse, [event.target.name]: event.target.value });
+    console.log(event.target.id);
+  };
 
-   const handleChangeOpen = (event) => {
-     setNewCourse({ ...newCourse, [event.target.name]: event.target.checked });
+  const handleChangeOpen = (event) => {
+    setNewCourse({ ...newCourse, [event.target.name]: event.target.checked });
   };
 
   const handleInstructors = (e) => {
     if (e.target.checked) {
-      
+
 
       setInstructors(instructors.concat(e.target.value));
       console.log(instructors);
     }
   }
-  
+
   const handleDates = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -89,39 +95,45 @@ const AddNewCourse = () => {
 
       [name]: value,
     });
-  };  
+  };
 
-   const handlePrices = (e) => {
-     let name = e.target.name;
-     let value = e.target.value;
-     setPrice({
-       ...price,
+  const handlePrices = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    setPrice({
+      ...price,
 
-       [name]: value,
-     });
-  }; 
-  
+      [name]: value,
+    });
+  };
+
   useEffect(() => {
     const axios = require("axios");
     if (instructorsInfo.length === 0) {
       axios
         .get(`${API}/instructors`)
-        .then(function(response) {
+        .then(function (response) {
           // handle success
 
           setInstructorsInfo(response.data);
           console.log(response.data);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           // handle error
           console.log(error);
         })
-        .then(function() {
+        .then(function () {
           // always executed
         });
     }
   }, []);
-  
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => history.push(`/courses`);
+  const handleShow = () => setShow(true);
+
+
   return (
     <Container fluid>
       <Row>
@@ -175,7 +187,7 @@ const AddNewCourse = () => {
                       key={inst.key}
                       value={inst.id}
                       onChange={handleInstructors}
-                      label={inst.name.first + " " + inst.name.last+" "+inst.id}
+                      label={inst.name.first + " " + inst.name.last + " " + inst.id}
                     />
                   </Form.Group>
                 ))}
@@ -211,13 +223,25 @@ const AddNewCourse = () => {
               </Form>
             </Card.Body>
             <Card.Footer>
-              <Button onClick={handleAddCourse} variant="primary">
-                Add new course
+              <Button onClick={handleAddCourse} variant="primary float-right">
+                Add Course
               </Button>
             </Card.Footer>
           </Card>
         </Col>
       </Row>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>New Course</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>A new course <strong>{newCourse.title}</strong> has been successfully added!</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
