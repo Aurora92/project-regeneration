@@ -22,7 +22,8 @@ const Course = () => {
   const [price, setPrice] = useState([]);
   const [dates, setDates] = useState([]);
   const [instructors, setInstructors] = useState([]);
-  const [instructorsInfo, setInstructorsInfo] = useState([]);
+    const [instructorsInfo, setInstructorsInfo] = useState([]);
+    const [instructorsAll, setInstructorsAll] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [updateCourse, setUpdateCourse] = useState({
@@ -114,21 +115,21 @@ const Course = () => {
     console.log(updateCourse);
   };
 
-  const instrHandle = (e) => {
+  const handleInstructors = (e) => {
     if (e.target.checked) {
-      handleUpdate(e);
-    } else {
+      setInstructors(instructors.concat(e.target.value));
+      console.log(instructors);
     }
   };
 
   const handleDateUpdate = (e) => {
     let name = e.target.name;
     let value = e.target.value;
-    setUpdateCourse({
-      ...course,
-      dates: {
+    setDates({
+      ...dates,
+      
         [name]: value,
-      },
+      
     });
   };
 
@@ -143,7 +144,8 @@ const Course = () => {
           setCourse(response.data);
           setPrice(response.data.price);
           setDates(response.data.dates);
-          setInstructors(response.data.instructors);
+            setInstructors(response.data.instructors);
+            setUpdateCourse(response.data);
         })
         .catch(function(error) {
           // handle error
@@ -162,7 +164,8 @@ const Course = () => {
           .get(`${API}/instructors/` + instructor)
           .then(function(response) {
             // handle success
-            setInstructorsInfo(instructorsInfo.concat(response.data));
+              setInstructorsInfo(instructorsInfo.concat(response.data));
+              console.log(instructors.length);
           })
           .catch(function(error) {
             // handle error
@@ -174,6 +177,27 @@ const Course = () => {
       });
     }
   });
+    
+    useEffect(() => {
+      const axios = require("axios");
+      if (instructorsAll.length === 0) {
+        axios
+          .get(`${API}/instructors`)
+          .then(function(response) {
+            // handle success
+
+            setInstructorsAll(response.data);
+     
+          })
+          .catch(function(error) {
+            // handle error
+            console.log(error);
+          })
+          .then(function() {
+            // always executed
+          });
+      }
+    }, []);
 
   return (
     <Container fluid>
@@ -185,20 +209,23 @@ const Course = () => {
       {/* ----------------------------------COURSE INFO----------------------- */}
       <Row>
         <Col>
-          <h1>{course.title}</h1>
+          <h1>{updateCourse.title}</h1>
         </Col>
       </Row>
       <Row>
         <Col>
-          <img src={course.imagePath} style={{width:"100%",height:"300px"}}/>
+          <img
+            src={course.imagePath}
+            style={{ width: "100%", height: "300px" }}
+          />
         </Col>
       </Row>
-      <hr/>
+      <hr />
       <Row>
         <Col>
           <h3>Price: {price.normal} €</h3>
         </Col>
-        <Col style={{textAlign:"right"}}>
+        <Col style={{ textAlign: "right" }}>
           <h3>Duration: {course.duration}</h3>
         </Col>
       </Row>
@@ -223,7 +250,7 @@ const Course = () => {
             )}
           </h3>
         </Col>
-        <Col style={{textAlign:"right"}}>
+        <Col style={{ textAlign: "right" }}>
           <h3>
             Dates:{" "}
             <strong>
@@ -244,7 +271,11 @@ const Course = () => {
           <Button variant="primary" onClick={handleShowEdit}>
             Edit
           </Button>
-          <Button variant="danger" onClick={handleShowDelete} style={{marginLeft:"5px"}}>
+          <Button
+            variant="danger"
+            onClick={handleShowDelete}
+            style={{ marginLeft: "5px" }}
+          >
             Delete
           </Button>
           {/* ----------------------------------EDIT COURSE FORM----------------------- */}
@@ -282,19 +313,20 @@ const Course = () => {
                     label="Bookable"
                     name="open"
                     onChange={ckboxHandle}
-                    
                   />
                   <hr />
                 </Form.Group>
-                {instructorsInfo.map((instr) => (
-                  <Form.Check
-                    type="checkbox"
-                    id="default-checkbox"
-                    value={instr.id}
-                    label={instr.name.first + " " + instr.name.last}
-                    onChange={instrHandle}
-                  />
-                ))}
+                <Form.Group onChange={handleInstructors}>
+                  <Form.Label>Instructors</Form.Label>
+                  {instructorsAll.map((inst) => (
+                    <Form.Check
+                      type="checkbox"
+                      key={inst.id}
+                      label={inst.name.first + " " + inst.name.last}
+                    />
+                  ))}
+                </Form.Group>
+
                 <hr />
                 <Form.Label>Description</Form.Label>
                 <Form.Control
@@ -354,9 +386,9 @@ const Course = () => {
       <Row>
         <Col>
           <h2>Instructors</h2>
-          {instructorsInfo.map((instr) => (
-            <Row>
-              <Col>
+          <ul>
+            {instructorsInfo.map((instr) => (
+              <div key={instr.id}>
                 <h3>
                   {instr.name.first +
                     " " +
@@ -366,12 +398,15 @@ const Course = () => {
                     ")"}
                 </h3>
                 <p>
-                  E-mail: <a href="">{instr.email} </a>| <a href={`${instr.linkedin}`} target="_blank">LinkedIn</a>
+                  E-mail: <a href="">{instr.email} </a>|{" "}
+                  <a href={`${instr.linkedin}`} target="_blank">
+                    LinkedIn
+                  </a>
                 </p>
                 <p>{instr.bio}</p>
-              </Col>
-            </Row>
-          ))}
+              </div>
+            ))}
+          </ul>
         </Col>
       </Row>
     </Container>

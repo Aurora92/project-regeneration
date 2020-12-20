@@ -10,7 +10,10 @@ import { useState, useEffect, setState, prevState } from "react";
 import { API } from "../api";
 
 const AddNewCourse = () => {
-  let last_id = 5;
+  const [price, setPrice] = useState({normal:"",early_bird:""});
+  const [dates, setDates] = useState({start_date:"",end_date:""});
+  const [instructors, setInstructors] = useState([]);
+  const [instructorsInfo, setInstructorsInfo] = useState([]);
   const [newCourse, setNewCourse] = useState({
     id: "",
     title: "",
@@ -28,25 +31,27 @@ const AddNewCourse = () => {
     instructors: [],
     description: "",
   });
+
+  
   const handleAddCourse = (e) => {
     const axios = require("axios");
 
     axios
       .post(`${API}/courses/`, {
-        id: "09",
+        id: newCourse.id,
         title: newCourse.title,
         imagePath: newCourse.imagePath,
         price: {
-          normal: 0,
-          early_bird: 0,
+          normal: price.normal,
+          early_bird: price.early_bird,
         },
         dates: {
-          start_date: "",
-          end_date: "",
+          start_date: dates.start_date,
+          end_date: dates.end_date,
         },
         duration: newCourse.duration,
         open: false,
-        instructors: [],
+        instructors: instructors,
         description: newCourse.description,
       })
       .then(function(response) {
@@ -55,7 +60,7 @@ const AddNewCourse = () => {
       .catch(function(error) {
         console.log(error);
       });
-    last_id = last_id + 1;
+    
   };
 
    const handleChange = (event) => {
@@ -65,7 +70,58 @@ const AddNewCourse = () => {
 
    const handleChangeOpen = (event) => {
      setNewCourse({ ...newCourse, [event.target.name]: event.target.checked });
-   };
+  };
+
+  const handleInstructors = (e) => {
+    if (e.target.checked) {
+      
+
+      setInstructors(instructors.concat(e.target.value));
+      console.log(instructors);
+    }
+  }
+  
+  const handleDates = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    setDates({
+      ...dates,
+
+      [name]: value,
+    });
+  };  
+
+   const handlePrices = (e) => {
+     let name = e.target.name;
+     let value = e.target.value;
+     setPrice({
+       ...price,
+
+       [name]: value,
+     });
+  }; 
+  
+  useEffect(() => {
+    const axios = require("axios");
+    if (instructorsInfo.length === 0) {
+      axios
+        .get(`${API}/instructors`)
+        .then(function(response) {
+          // handle success
+
+          setInstructorsInfo(response.data);
+          console.log(response.data);
+        })
+        .catch(function(error) {
+          // handle error
+          console.log(error);
+        })
+        .then(function() {
+          // always executed
+        });
+    }
+  }, []);
+  
   return (
     <Container fluid>
       <Row>
@@ -111,6 +167,19 @@ const AddNewCourse = () => {
                   <hr />
                 </Form.Group>
 
+                <h3>Instructors</h3>
+                {instructorsInfo.map((inst) => (
+                  <Form.Group>
+                    <Form.Check
+                      type="checkbox"
+                      key={inst.key}
+                      value={inst.id}
+                      onChange={handleInstructors}
+                      label={inst.name.first + " " + inst.name.last+" "+inst.id}
+                    />
+                  </Form.Group>
+                ))}
+
                 <hr />
                 <Form.Group name="description" onChange={handleChange}>
                   <Form.Label>
@@ -119,29 +188,30 @@ const AddNewCourse = () => {
                   <Form.Control as="textarea" rows={3} />
                 </Form.Group>
                 <hr />
-                <Form.Group>
+                <Form.Group onChange={handleDates}>
                   <Form.Label>
                     <h3>Dates</h3>
                   </Form.Label>
                   <h4>Start Date:</h4>
-                  <Form.Control type="text" />
+                  <Form.Control name="start_date" type="text" />
+
+                  <h4>End Date:</h4>
+                  <Form.Control name="end_date" type="text" />
                 </Form.Group>
-                <h4>End Date:</h4>
-                <Form.Control type="text" />
                 <hr />
-                <Form.Group>
+                <Form.Group onChange={handlePrices}>
                   <Form.Label>
                     <h3>Prices</h3>
                   </Form.Label>
                   <h4>Normal:</h4>
-                  <Form.Control type="text" />
+                  <Form.Control name="normal" type="text" />
                   <h4>Early Bird:</h4>
-                  <Form.Control type="text" />
+                  <Form.Control name="early_bird" type="text" />
                 </Form.Group>
               </Form>
             </Card.Body>
             <Card.Footer>
-              <Button variant="primary" onClick={handleAddCourse}>
+              <Button onClick={handleAddCourse} variant="primary">
                 Add new course
               </Button>
             </Card.Footer>
