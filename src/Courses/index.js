@@ -82,7 +82,7 @@ const Courses = () => {
                                     </Card.Text>
                                 </Card.Body>
                                 <Card.Footer>
-                                    <Button variant="primary float-right"><Link to="/course" style={{
+                                    <Button variant="primary float-right"><Link to={`/courses/${course.id}`} style={{
                                         textDecoration: "none", color: "white"
                                     }}>View</Link></Button>
                                 </Card.Footer>

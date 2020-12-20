@@ -88,7 +88,7 @@ const CoursesTable = () => {
                         </td>
                         <td>{course.price.normal} €</td>
                         <td>
-                            {course.dates.start_date} - {course.dates.end_date}
+                        {new Date(course.dates.start_date).toLocaleDateString( 'en-GB')} - {new Date(course.dates.end_date).toLocaleDateString( 'en-GB')}
                         </td>
                         <td>
                             <Button variant="primary" onClick={() => setIdCourse(course.id)}><Link to={`/courses/${course.id}`} style={{
