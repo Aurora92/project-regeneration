@@ -161,14 +161,12 @@ const Course = () => {
   }, []);
 
   useEffect(() => {
-    if (instructorsInfo.length === 0) {
-      instructors.forEach((instructor) => {
         axios
-          .get(`${API}/instructors/` + instructor)
+          .get(`${API}/instructors`)
           .then(function (response) {
             // handle success
-            setInstructorsInfo(instructorsInfo.concat(response.data));
-            console.log(instructors.length);
+            setInstructorsInfo(response.data);
+            
           })
           .catch(function (error) {
             // handle error
@@ -177,9 +175,7 @@ const Course = () => {
           .then(function () {
             // always executed
           });
-      });
-    }
-  });
+ },[]);
 
   useEffect(() => {
     const axios = require("axios");
@@ -402,6 +398,7 @@ const Course = () => {
         <Col>
           <h2>Instructors</h2>
           <ul>
+          {console.log(instructorsInfo)}
             {instructorsInfo.map((instr) => (
               <div key={instr.id}>
                 <h3>

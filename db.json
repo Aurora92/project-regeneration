@@ -36,7 +36,40 @@
       },
       "duration": "2 days",
       "open": true,
-      "instructors": [],
+      "instructors": [
+        {
+          "id": "01",
+          "gender": "male",
+          "name": {
+            "first": "John",
+            "last": "Tsevdos"
+          },
+          "email": "tsevdosjohn@gmail.com",
+          "dob": "1982-02-26",
+          "bio": "front-end developer from Athens, Greece",
+          "hobbies": [
+            "football",
+            "movies"
+          ],
+          "linkedin": "https://www.linkedin.com/sample"
+        },
+        {
+          "id": "02",
+          "gender": "male",
+          "name": {
+            "first": "Yiannis",
+            "last": "Nikolakopoulos"
+          },
+          "username": "tsevdos",
+          "email": "inikolakopoulos@codehub.gr",
+          "dob": "1977-05-19",
+          "bio": "Co-Founder Code.Hub",
+          "hobbies": [
+            "movies"
+          ],
+          "linkedin": "https://www.linkedin.com/sample"
+        }
+      ],
       "description": "<p>This <strong>innovative Scrum class</strong> won’t be like any other you’ve heard of, with an unconventional focus on the deeply human foundations at work in teams building stuff together.</p><p>This two-day seminar is designed to give aspiring and beginning ScrumMasters and team members the foundations of Scrum and Agile practice. Chock full of exercises, the seminar creates lasting memories and learnings you can carry through into your team so you can avoid common Agile pitfalls. The seminar is designed and taught by <strong>Jim Coplien</strong>, <strong>author of Organizational Patterns and Lean/Agile Process and Architecture Coach</strong>.</p>"
     },
     {
@@ -87,24 +120,7 @@
       },
       "duration": "2 Wednesdays and 3 Saturdays",
       "open": true,
-      "instructors": [
-        {
-          "id": "02",
-          "gender": "male",
-          "name": {
-            "first": "Yiannis",
-            "last": "Nikolakopoulos"
-          },
-          "username": "tsevdos",
-          "email": "inikolakopoulos@codehub.gr",
-          "dob": "1977-05-19",
-          "bio": "Co-Founder Code.Hub",
-          "hobbies": [
-            "movies"
-          ],
-          "linkedin": "https://www.linkedin.com/sample"
-        }
-      ],
+      "instructors": [],
       "description": "<p>This code.learn program&nbsp;covers introductory and advanced <strong>Angular</strong> topics through extensive hands-on sessions and guidance from senior developers.</p>"
     },
     {
