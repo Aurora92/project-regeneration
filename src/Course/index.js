@@ -1,7 +1,6 @@
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import Card from "react-bootstrap/Card";
-import CardDeck from "react-bootstrap/CardDeck";
+
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -21,6 +20,7 @@ const Course = () => {
   const [course, setCourse] = useState([]);
   const [price, setPrice] = useState([]);
   const [dates, setDates] = useState([]);
+  const [open, setOpen] = useState(false);
   const [instructors, setInstructors] = useState([]);
     const [instructorsInfo, setInstructorsInfo] = useState([]);
     const [instructorsAll, setInstructorsAll] = useState([]);
@@ -39,8 +39,8 @@ const Course = () => {
       end_date: dates.end_date,
     },
     duration: course.duration,
-    open: true,
-    instructors: instructorsInfo,
+    open: course.open,
+    instructors: course.instructors,
     description: course.description,
   });
 
@@ -49,7 +49,7 @@ const Course = () => {
   const handleShowEdit = () => setShowEdit(true);
   const handleShowDelete = () => setShowDelete(true);
 
-  const handleEditCourse = () => {
+  const handleEditCourse = (e) => {
     const axios = require("axios");
 
     axios
@@ -66,8 +66,8 @@ const Course = () => {
           end_date: dates.end_date,
         },
         duration: course.duration,
-        open: course.open,
-        instructors: instructorsInfo,
+        open: open,
+        instructors: instructors,
         description: course.description,
       })
       .then(function(response) {
@@ -76,7 +76,9 @@ const Course = () => {
       .catch(function(error) {
         console.log(error);
       });
-      console.log(course)
+    console.log(course);
+    e.preventDefault();
+    window.location.reload(false);
   };
 
   const handleDeleteCourse = () => {
@@ -91,34 +93,31 @@ const Course = () => {
     setCourse({
       ...course,
       [name]: value,
-      price: {
-        normal: price.normal,
-        early_bird: price.early_bird,
-      },
+     
     });
 
     console.log(course);
   };
 
   const ckboxHandle = (e) => {
+    setOpen(!open);
     let name = e.target.name;
     let value = e.target.checked;
     setCourse({
       ...course,
       [name]: value,
-      price: {
-        normal: price.normal,
-        early_bird: price.early_bird,
-      },
+      
     });
 
-    console.log(updateCourse);
+    
   };
 
   const handleInstructors = (e) => {
     if (e.target.checked) {
       setInstructors(instructors.concat(e.target.value));
-      console.log(instructors);
+      
+    } else {
+      
     }
   };
 
@@ -132,7 +131,24 @@ const Course = () => {
       
     });
   };
+useEffect(() => {
+  if (instructorsAll.length === 0) {
+    axios
+      .get(`${API}/instructors`)
+      .then(function(response) {
+        // handle success
 
+        setInstructorsAll(response.data);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      })
+      .then(function() {
+        // always executed
+      });
+  }
+}, []);
   const axios = require("axios");
   useEffect(() => {
     if (course.length === 0) {
@@ -144,7 +160,8 @@ const Course = () => {
           setCourse(response.data);
           setPrice(response.data.price);
           setDates(response.data.dates);
-            setInstructors(response.data.instructors);
+          setInstructors(response.data.instructors);
+        
             setUpdateCourse(response.data);
         })
         .catch(function(error) {
@@ -157,48 +174,27 @@ const Course = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (instructorsInfo.length === 0) {
-      instructors.forEach((instructor) => {
-        axios
-          .get(`${API}/instructors/` + instructor)
-          .then(function(response) {
-            // handle success
-              setInstructorsInfo(instructorsInfo.concat(response.data));
-              console.log(instructors.length);
-          })
-          .catch(function(error) {
-            // handle error
-            console.log(error);
-          })
-          .then(function() {
-            // always executed
-          });
-      });
-    }
-  });
+  if (instructorsInfo.length === 0) {
+    instructors.forEach((instructor) => {
+      
+      instructorsAll.forEach((instAll) => {
+        
+        if (instructor == instAll.id) {
+          
+          setInstructorsInfo(instructorsInfo.concat(instAll));
+        }
+      })
+    })
     
-    useEffect(() => {
-      const axios = require("axios");
-      if (instructorsAll.length === 0) {
-        axios
-          .get(`${API}/instructors`)
-          .then(function(response) {
-            // handle success
+  };
 
-            setInstructorsAll(response.data);
-     
-          })
-          .catch(function(error) {
-            // handle error
-            console.log(error);
-          })
-          .then(function() {
-            // always executed
-          });
-      }
-    }, []);
 
+
+  
+
+  
+    
+  
   return (
     <Container fluid>
       <Row className="my-5">
@@ -215,7 +211,7 @@ const Course = () => {
       <Row>
         <Col>
           <img
-            src={course.imagePath}
+            src={updateCourse.imagePath}
             style={{ width: "100%", height: "300px" }}
           />
         </Col>
@@ -223,17 +219,17 @@ const Course = () => {
       <hr />
       <Row>
         <Col>
-          <h3>Price: {price.normal} €</h3>
+          <h3>Price: {updateCourse.price.normal} €</h3>
         </Col>
         <Col style={{ textAlign: "right" }}>
-          <h3>Duration: {course.duration}</h3>
+          <h3>Duration: {updateCourse.duration}</h3>
         </Col>
       </Row>
       <Row>
         <Col>
           <h3>
             Bookable:
-            {course.open && (
+            {updateCourse.open && (
               <svg
                 width="2em"
                 height="2em"
@@ -254,8 +250,13 @@ const Course = () => {
           <h3>
             Dates:{" "}
             <strong>
-              {new Date(dates.start_date).toLocaleDateString("en-GB")} -{" "}
-              {new Date(dates.end_date).toLocaleDateString("en-GB")}
+              {new Date(updateCourse.dates.start_date).toLocaleDateString(
+                "en-GB"
+              )}{" "}
+              -{" "}
+              {new Date(updateCourse.dates.end_date).toLocaleDateString(
+                "en-GB"
+              )}
             </strong>{" "}
           </h3>
         </Col>
@@ -263,7 +264,9 @@ const Course = () => {
       <Row>
         <Col className="mt-5">
           {" "}
-          <div dangerouslySetInnerHTML={{ __html: course.description }} />
+          <div
+            dangerouslySetInnerHTML={{ __html: updateCourse.description }}
+          />
         </Col>
       </Row>
       <Row>
@@ -281,11 +284,11 @@ const Course = () => {
           {/* ----------------------------------EDIT COURSE FORM----------------------- */}
           <Modal show={showEdit} onHide={handleCloseEdit}>
             <Modal.Header closeButton>
-              <Modal.Title>Edit Course: {course.title}</Modal.Title>
+              <Modal.Title>Edit Course: {updateCourse.title}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <Form>
-                <Form.Group controlId="exampleForm.ControlInput1">
+              <Form onSubmit={handleEditCourse}>
+                <Form.Group>
                   <Form.Label>Title</Form.Label>
                   <Form.Control
                     type="text"
@@ -293,6 +296,8 @@ const Course = () => {
                     placeholder={course.title}
                     onChange={handleUpdate}
                   />
+                </Form.Group>
+                <Form.Group>
                   <Form.Label>Duration</Form.Label>
                   <Form.Control
                     name="duration"
@@ -300,6 +305,8 @@ const Course = () => {
                     placeholder={course.duration}
                     onChange={handleUpdate}
                   />
+                </Form.Group>
+                <Form.Group>
                   <Form.Label>Image Path</Form.Label>
                   <Form.Control
                     type="text"
@@ -307,22 +314,26 @@ const Course = () => {
                     placeholder={course.imagePath}
                     onChange={handleUpdate}
                   />
+                </Form.Group>
+                <Form.Group onChange={ckboxHandle}>
                   <Form.Check
                     type="checkbox"
-                    id="default-checkbox"
+                    id="bookable-check"
                     label="Bookable"
                     name="open"
-                    onChange={ckboxHandle}
+                    checked={open}
                   />
                   <hr />
                 </Form.Group>
-                <Form.Group onChange={handleInstructors}>
+                <Form.Group>
                   <Form.Label>Instructors</Form.Label>
                   {instructorsAll.map((inst) => (
                     <Form.Check
                       type="checkbox"
                       key={inst.id}
                       label={inst.name.first + " " + inst.name.last}
+                      value={inst.id}
+                      onChange={handleInstructors}
                     />
                   ))}
                 </Form.Group>
@@ -352,18 +363,17 @@ const Course = () => {
                   onChange={handleDateUpdate}
                   placeholder={dates.end_date}
                 />
+                <Button variant="secondary" onClick={handleCloseEdit}>
+                  Close
+                </Button>
+                <Button variant="primary" type="submit">
+                  Save Changes
+                </Button>
               </Form>
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleCloseEdit}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={handleEditCourse}>
-                Save Changes
-              </Button>
-            </Modal.Footer>
-            {/* ----------------------------------DELETE COURSE--------------------------- */}
+            <Modal.Footer />
           </Modal>
+          {/* ----------------------------------DELETE COURSE--------------------------- */}
           <Modal show={showDelete} onHide={handleCloseDelete}>
             <Modal.Header closeButton>
               <Modal.Title>Delete Course: {course.title}</Modal.Title>
@@ -386,9 +396,10 @@ const Course = () => {
       <Row>
         <Col>
           <h2>Instructors</h2>
-          <ul>
-            {instructorsInfo.map((instr) => (
-              <div key={instr.id}>
+
+          {instructorsInfo.map((instr) => (
+            <Row key={instr.id}>
+              <Col>
                 <h3>
                   {instr.name.first +
                     " " +
@@ -404,9 +415,9 @@ const Course = () => {
                   </a>
                 </p>
                 <p>{instr.bio}</p>
-              </div>
-            ))}
-          </ul>
+              </Col>
+            </Row>
+          ))}
         </Col>
       </Row>
     </Container>
