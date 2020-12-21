@@ -1,19 +1,17 @@
-
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import Card from "react-bootstrap/Card";
+import CardDeck from "react-bootstrap/CardDeck";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import CustomNavbar from '../CustomNavbar';
-import { API } from '../api';
+import CustomNavbar from "../CustomNavbar";
+import { API } from "../api";
 import Button from "react-bootstrap/Button";
 import { Link, useParams, useHistory } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
 import { useState, useEffect, setState, prevState } from "react";
-
-
 
 const Course = () => {
   let { id } = useParams();
@@ -67,31 +65,26 @@ const Course = () => {
           end_date: dates.end_date,
         },
         duration: course.duration,
-        open: open,
-        instructors: instructors,
+        open: course.open,
+        instructors: instructorsInfo,
         description: course.description,
       })
-      .then(function (response) {
+      .then(function(response) {
         console.log(response);
         handleCloseEdit();
       })
-      .catch(function (error) {
+      .catch(function(error) {
         console.log(error);
       });
-<<<<<<< HEAD
-    console.log(course);
     e.preventDefault();
     window.location.reload(false);
-=======
-    console.log(course)
->>>>>>> 81e19c95190181b05e32eb5b7fdc1c2c24e48908
   };
 
   const handleDeleteCourse = () => {
     const axios = require("axios");
 
     axios.delete(`${API}/courses/${id}`);
-    history.push('/courses');
+    history.push("/courses");
   };
 
   const handleUpdate = (e) => {
@@ -100,31 +93,29 @@ const Course = () => {
     setCourse({
       ...course,
       [name]: value,
-     
+      price: {
+        normal: price.normal,
+        early_bird: price.early_bird,
+      },
     });
 
     console.log(course);
   };
 
-  const ckboxHandle = (e) => {
-    setOpen(!open);
-    let name = e.target.name;
-    let value = e.target.checked;
-    setCourse({
-      ...course,
-      [name]: value,
-      
-    });
-
-    
-  };
+ const ckboxHandle = (e) => {
+   setOpen(!open);
+   let name = e.target.name;
+   let value = e.target.checked;
+   setCourse({
+     ...course,
+     [name]: value,
+   });
+ };
 
   const handleInstructors = (e) => {
     if (e.target.checked) {
       setInstructors(instructors.concat(e.target.value));
-      
-    } else {
-      
+      console.log(instructors);
     }
   };
 
@@ -135,17 +126,39 @@ const Course = () => {
       ...dates,
 
       [name]: value,
-
     });
   };
-useEffect(() => {
-  if (instructorsAll.length === 0) {
+
+  const axios = require("axios");
+  useEffect(() => {
+    if (course.length === 0) {
+      axios
+        .get(`${API}/courses/${id}`)
+        .then(function(response) {
+          // handle success
+
+          setCourse(response.data);
+          setPrice(response.data.price);
+          setDates(response.data.dates);
+          setInstructors(response.data.instructors);
+          setUpdateCourse(response.data);
+        })
+        .catch(function(error) {
+          // handle error
+          console.log(error);
+        })
+        .then(function() {
+          // always executed
+        });
+    }
+  }, []);
+
+  useEffect(() => {
     axios
       .get(`${API}/instructors`)
       .then(function(response) {
         // handle success
-
-        setInstructorsAll(response.data);
+        setInstructorsInfo(response.data);
       })
       .catch(function(error) {
         // handle error
@@ -154,102 +167,28 @@ useEffect(() => {
       .then(function() {
         // always executed
       });
-  }
-}, []);
-  const axios = require("axios");
-  useEffect(() => {
-    if (course.length === 0) {
-      axios
-        .get(`${API}/courses/${id}`)
-        .then(function (response) {
-          // handle success
-
-          setCourse(response.data);
-          setPrice(response.data.price);
-          setDates(response.data.dates);
-          setInstructors(response.data.instructors);
-<<<<<<< HEAD
-        
-            setUpdateCourse(response.data);
-=======
-          setUpdateCourse(response.data);
->>>>>>> 81e19c95190181b05e32eb5b7fdc1c2c24e48908
-        })
-        .catch(function (error) {
-          // handle error
-          console.log(error);
-        })
-        .then(function () {
-          // always executed
-        });
-    }
   }, []);
-
-<<<<<<< HEAD
-  if (instructorsInfo.length === 0) {
-    instructors.forEach((instructor) => {
-      
-      instructorsAll.forEach((instAll) => {
-        
-        if (instructor == instAll.id) {
-          
-          setInstructorsInfo(instructorsInfo.concat(instAll));
-        }
-      })
-    })
-    
-  };
-
-=======
-  useEffect(() => {
-    if (instructorsInfo.length === 0) {
-      instructors.forEach((instructor) => {
-        axios
-          .get(`${API}/instructors/` + instructor)
-          .then(function (response) {
-            // handle success
-            setInstructorsInfo(instructorsInfo.concat(response.data));
-            console.log(instructors.length);
-          })
-          .catch(function (error) {
-            // handle error
-            console.log(error);
-          })
-          .then(function () {
-            // always executed
-          });
-      });
-    }
-  });
 
   useEffect(() => {
     const axios = require("axios");
     if (instructorsAll.length === 0) {
       axios
         .get(`${API}/instructors`)
-        .then(function (response) {
+        .then(function(response) {
           // handle success
 
           setInstructorsAll(response.data);
-
         })
-        .catch(function (error) {
+        .catch(function(error) {
           // handle error
           console.log(error);
         })
-        .then(function () {
+        .then(function() {
           // always executed
         });
     }
   }, []);
->>>>>>> 81e19c95190181b05e32eb5b7fdc1c2c24e48908
 
-
-  
-
-  
-    
-  
   return (
     <Container fluid>
       <Row className="my-5">
@@ -284,11 +223,7 @@ useEffect(() => {
         <Col>
           <h3>
             Bookable:
-<<<<<<< HEAD
-            {updateCourse.open && (
-=======
-            {course.open ? (
->>>>>>> 81e19c95190181b05e32eb5b7fdc1c2c24e48908
+            {updateCourse.open ? (
               <svg
                 width="2em"
                 height="2em"
@@ -302,7 +237,7 @@ useEffect(() => {
                   d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"
                 />
               </svg>
-            ) :
+            ) : (
               <svg
                 width="2em"
                 height="2em"
@@ -311,10 +246,12 @@ useEffect(() => {
                 fill="red"
                 xmlns="http://www.w3.org/2000/svg"
               >
-
-                <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                <path
+                  fill-rule="evenodd"
+                  d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+                />
               </svg>
-            }
+            )}
           </h3>
         </Col>
         <Col style={{ textAlign: "right" }}>
@@ -359,7 +296,7 @@ useEffect(() => {
             </Modal.Header>
             <Modal.Body>
               <Form onSubmit={handleEditCourse}>
-                <Form.Group>
+                <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label>Title</Form.Label>
                   <Form.Control
                     type="text"
@@ -367,8 +304,6 @@ useEffect(() => {
                     placeholder={course.title}
                     onChange={handleUpdate}
                   />
-                </Form.Group>
-                <Form.Group>
                   <Form.Label>Duration</Form.Label>
                   <Form.Control
                     name="duration"
@@ -376,8 +311,6 @@ useEffect(() => {
                     placeholder={course.duration}
                     onChange={handleUpdate}
                   />
-                </Form.Group>
-                <Form.Group>
                   <Form.Label>Image Path</Form.Label>
                   <Form.Control
                     type="text"
@@ -385,26 +318,22 @@ useEffect(() => {
                     placeholder={course.imagePath}
                     onChange={handleUpdate}
                   />
-                </Form.Group>
-                <Form.Group onChange={ckboxHandle}>
                   <Form.Check
                     type="checkbox"
-                    id="bookable-check"
+                    id="default-checkbox"
                     label="Bookable"
                     name="open"
-                    checked={open}
+                    onChange={ckboxHandle}
                   />
                   <hr />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group onChange={handleInstructors}>
                   <Form.Label>Instructors</Form.Label>
                   {instructorsAll.map((inst) => (
                     <Form.Check
                       type="checkbox"
                       key={inst.id}
                       label={inst.name.first + " " + inst.name.last}
-                      value={inst.id}
-                      onChange={handleInstructors}
                     />
                   ))}
                 </Form.Group>
@@ -442,9 +371,9 @@ useEffect(() => {
                 </Button>
               </Form>
             </Modal.Body>
-            <Modal.Footer />
+
+            {/* ----------------------------------DELETE COURSE--------------------------- */}
           </Modal>
-          {/* ----------------------------------DELETE COURSE--------------------------- */}
           <Modal show={showDelete} onHide={handleCloseDelete}>
             <Modal.Header closeButton>
               <Modal.Title>Delete Course: {course.title}</Modal.Title>
@@ -467,10 +396,10 @@ useEffect(() => {
       <Row>
         <Col>
           <h2>Instructors</h2>
-
-          {instructorsInfo.map((instr) => (
-            <Row key={instr.id}>
-              <Col>
+          <ul>
+            {console.log(instructorsInfo)}
+            {instructorsInfo.map((instr) => (
+              <div key={instr.id}>
                 <h3>
                   {instr.name.first +
                     " " +
@@ -486,9 +415,9 @@ useEffect(() => {
                   </a>
                 </p>
                 <p>{instr.bio}</p>
-              </Col>
-            </Row>
-          ))}
+              </div>
+            ))}
+          </ul>
         </Col>
       </Row>
     </Container>
