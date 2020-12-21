@@ -53,7 +53,7 @@ const AddNewCourse = () => {
           end_date: dates.end_date,
         },
         duration: newCourse.duration,
-        open: false,
+        open: newCourse.open,
         instructors: instructors,
         description: newCourse.description,
       })
@@ -75,8 +75,10 @@ const AddNewCourse = () => {
   };
 
   const handleChangeOpen = (event) => {
-    setNewCourse({ ...newCourse, [event.target.name]: event.target.checked });
+    setNewCourse({ ...newCourse,[event.target.name]: event.target.checked });
+  
   };
+
 
   const handleInstructors = (e) => {
     if (e.target.checked) {

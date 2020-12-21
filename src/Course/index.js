@@ -19,10 +19,11 @@ const Course = () => {
   const [course, setCourse] = useState([]);
   const [price, setPrice] = useState([]);
   const [dates, setDates] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [instructors, setInstructors] = useState([]);
   const [instructorsInfo, setInstructorsInfo] = useState([]);
-  const [instructorsAll, setInstructorsAll] = useState([]);
+  const [selected, setSelected] = useState([]);
+ 
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [updateCourse, setUpdateCourse] = useState({
@@ -66,7 +67,7 @@ const Course = () => {
         },
         duration: course.duration,
         open: course.open,
-        instructors: instructorsInfo,
+        instructors: selected,
         description: course.description,
       })
       .then(function(response) {
@@ -99,11 +100,11 @@ const Course = () => {
       },
     });
 
-    console.log(course);
+ 
   };
 
  const ckboxHandle = (e) => {
-   setOpen(!open);
+  
    let name = e.target.name;
    let value = e.target.checked;
    setCourse({
@@ -111,12 +112,20 @@ const Course = () => {
      [name]: value,
    });
  };
-
+  
   const handleInstructors = (e) => {
+    
     if (e.target.checked) {
-      setInstructors(instructors.concat(e.target.value));
-      console.log(instructors);
+     
+      setSelected(selected.concat(e.target.value));
+      
+      
+    } else {
+      
+      var i = selected.indexOf(e.target.value);
+      setSelected(selected.splice(i,1));
     }
+   
   };
 
   const handleDateUpdate = (e) => {
@@ -124,6 +133,16 @@ const Course = () => {
     let value = e.target.value;
     setDates({
       ...dates,
+
+      [name]: value,
+    });
+  };
+
+  const handlePriceUpdate = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    setPrice({
+      ...price,
 
       [name]: value,
     });
@@ -141,6 +160,8 @@ const Course = () => {
           setPrice(response.data.price);
           setDates(response.data.dates);
           setInstructors(response.data.instructors);
+          
+          
           setUpdateCourse(response.data);
         })
         .catch(function(error) {
@@ -159,6 +180,7 @@ const Course = () => {
       .then(function(response) {
         // handle success
         setInstructorsInfo(response.data);
+
       })
       .catch(function(error) {
         // handle error
@@ -169,25 +191,7 @@ const Course = () => {
       });
   }, []);
 
-  useEffect(() => {
-    const axios = require("axios");
-    if (instructorsAll.length === 0) {
-      axios
-        .get(`${API}/instructors`)
-        .then(function(response) {
-          // handle success
-
-          setInstructorsAll(response.data);
-        })
-        .catch(function(error) {
-          // handle error
-          console.log(error);
-        })
-        .then(function() {
-          // always executed
-        });
-    }
-  }, []);
+  
 
   return (
     <Container fluid>
@@ -323,20 +327,24 @@ const Course = () => {
                     id="default-checkbox"
                     label="Bookable"
                     name="open"
+                    checked={course.open}
                     onChange={ckboxHandle}
                   />
                   <hr />
                 </Form.Group>
-                <Form.Group onChange={handleInstructors}>
-                  <Form.Label>Instructors</Form.Label>
-                  {instructorsAll.map((inst) => (
+
+                <Form.Label>Instructors</Form.Label>
+                {instructorsInfo.map((inst) => (
+                  <Form.Group>
                     <Form.Check
                       type="checkbox"
                       key={inst.id}
+                      value={inst.id}
                       label={inst.name.first + " " + inst.name.last}
+                      onChange={handleInstructors}
                     />
-                  ))}
-                </Form.Group>
+                  </Form.Group>
+                ))}
 
                 <hr />
                 <Form.Label>Description</Form.Label>
@@ -349,19 +357,35 @@ const Course = () => {
                 />
                 <hr />
                 <Form.Label>Dates</Form.Label>
-                <h4>Start Date:</h4>
+                <h5>Start Date:</h5>
                 <Form.Control
                   type="text"
                   name="start_date"
                   onChange={handleDateUpdate}
                   placeholder={dates.start_date}
                 />
-                <h4>End Date:</h4>
+                <h5>End Date:</h5>
                 <Form.Control
                   type="text"
                   name="end_date"
                   onChange={handleDateUpdate}
                   placeholder={dates.end_date}
+                />
+                <hr />
+                <Form.Label>Prices</Form.Label>
+                <h5>Normal:</h5>
+                <Form.Control
+                  type="text"
+                  name="normal"
+                  onChange={handlePriceUpdate}
+                  placeholder={price.normal}
+                />
+                <h5>Early Bird:</h5>
+                <Form.Control
+                  type="text"
+                  name="early_bird"
+                  onChange={handlePriceUpdate}
+                  placeholder={price.early_bird}
                 />
                 <Button variant="secondary" onClick={handleCloseEdit}>
                   Close
@@ -397,26 +421,28 @@ const Course = () => {
         <Col>
           <h2>Instructors</h2>
           <ul>
-            {console.log(instructorsInfo)}
-            {instructorsInfo.map((instr) => (
-              <div key={instr.id}>
-                <h3>
-                  {instr.name.first +
-                    " " +
-                    instr.name.last +
-                    " (" +
-                    instr.dob +
-                    ")"}
-                </h3>
-                <p>
-                  E-mail: <a href="">{instr.email} </a>|{" "}
-                  <a href={`${instr.linkedin}`} target="_blank">
-                    LinkedIn
-                  </a>
-                </p>
-                <p>{instr.bio}</p>
-              </div>
-            ))}
+            {instructorsInfo.map(
+              (instr) =>
+                instructors.includes(instr.id) && (
+                  <div key={instr.id}>
+                    <h3>
+                      {instr.name.first +
+                        " " +
+                        instr.name.last +
+                        " (" +
+                        instr.dob +
+                        ")"}
+                    </h3>
+                    <p>
+                      E-mail: <a href="">{instr.email} </a>|{" "}
+                      <a href={`${instr.linkedin}`} target="_blank">
+                        LinkedIn
+                      </a>
+                    </p>
+                    <p>{instr.bio}</p>
+                  </div>
+                )
+            )}
           </ul>
         </Col>
       </Row>
