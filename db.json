@@ -47,7 +47,7 @@
       "title": "User eXperience (UX) Research",
       "imagePath": "/ui-ux.png",
       "price": {
-        "normal": 500,
+        "normal": "500",
         "early_bird": 450
       },
       "dates": {
@@ -57,8 +57,8 @@
       "duration": "4 Fridays and 4 Saturdays",
       "open": true,
       "instructors": [
-        "01",
-        "02"
+        "02",
+        "01"
       ],
       "description": "<p>Do you want to <strong>design products based on opinions or based on evidence</strong>?</p><p>In this course you will learn how <strong>UX research</strong> builds products that users really need, can and want to use!</p>"
     },

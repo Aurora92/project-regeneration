@@ -19,11 +19,8 @@ const Course = () => {
   const [course, setCourse] = useState([]);
   const [price, setPrice] = useState([]);
   const [dates, setDates] = useState([]);
-  const [open, setOpen] = useState(true);
   const [instructors, setInstructors] = useState([]);
   const [instructorsInfo, setInstructorsInfo] = useState([]);
-  const [selected, setSelected] = useState([]);
- 
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [updateCourse, setUpdateCourse] = useState({
@@ -40,7 +37,7 @@ const Course = () => {
     },
     duration: course.duration,
     open: course.open,
-    instructors: course.instructors,
+    instructors: instructors,
     description: course.description,
   });
 
@@ -67,7 +64,7 @@ const Course = () => {
         },
         duration: course.duration,
         open: course.open,
-        instructors: selected,
+        instructors: instructors,
         description: course.description,
       })
       .then(function(response) {
@@ -113,19 +110,15 @@ const Course = () => {
    });
  };
   
-  const handleInstructors = (e) => {
-    
-    if (e.target.checked) {
-     
-      setSelected(selected.concat(e.target.value));
-      
-      
+ const handleInstructors = (e) => {
+  const value = e.target.value;
+    if (instructors.includes(value)) {
+      setInstructors(
+        instructors.filter((instructors) => instructors !== value)
+      );
     } else {
-      
-      var i = selected.indexOf(e.target.value);
-      setSelected(selected.splice(i,1));
+      setInstructors([...instructors, value]);
     }
-   
   };
 
   const handleDateUpdate = (e) => {
@@ -342,6 +335,7 @@ const Course = () => {
                       value={inst.id}
                       label={inst.name.first + " " + inst.name.last}
                       onChange={handleInstructors}
+                      checked={instructors.includes(inst.id)}
                     />
                   </Form.Group>
                 ))}
@@ -387,11 +381,13 @@ const Course = () => {
                   onChange={handlePriceUpdate}
                   placeholder={price.early_bird}
                 />
-                <Button variant="secondary" onClick={handleCloseEdit}>
-                  Close
-                </Button>
-                <Button variant="primary" type="submit">
+                
+                
+                <Button variant="primary float-right" type="submit" style={{margin:"1em"}}>
                   Save Changes
+                </Button>
+                <Button variant="secondary float-right" onClick={handleCloseEdit} style={{margin:"1em"}}>
+                  Close
                 </Button>
               </Form>
             </Modal.Body>
@@ -423,7 +419,7 @@ const Course = () => {
           <ul>
             {instructorsInfo.map(
               (instr) =>
-                instructors.includes(instr.id) && (
+              updateCourse.instructors.includes(instr.id) && (
                   <div key={instr.id}>
                     <h3>
                       {instr.name.first +
