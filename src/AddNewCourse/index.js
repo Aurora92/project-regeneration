@@ -81,13 +81,15 @@ const AddNewCourse = () => {
 
 
   const handleInstructors = (e) => {
-    if (e.target.checked) {
-
-
-      setInstructors(instructors.concat(e.target.value));
-      console.log(instructors);
+    const selected = e.target.value;
+    if (instructors.includes(selected)) {
+      setInstructors(
+        instructors.filter((instructors) => instructors !== selected)
+      );
+    } else {
+      setInstructors([...instructors, selected]);
     }
-  }
+  };
 
   const handleDates = (e) => {
     let name = e.target.name;

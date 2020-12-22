@@ -1,6 +1,4 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import Card from "react-bootstrap/Card";
-import CardDeck from "react-bootstrap/CardDeck";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -16,6 +14,7 @@ import { useState, useEffect, setState, prevState } from "react";
 const Course = () => {
   let { id } = useParams();
   const history = useHistory();
+/* --------------STATE-------------------- */
   const [course, setCourse] = useState([]);
   const [price, setPrice] = useState([]);
   const [dates, setDates] = useState([]);
@@ -41,11 +40,16 @@ const Course = () => {
     description: course.description,
   });
 
+/* ----------------------------------------- */
+  
+ /* ------------HANDLE MODAL---------------- */
   const handleCloseEdit = () => setShowEdit(false);
   const handleCloseDelete = () => setShowDelete(false);
   const handleShowEdit = () => setShowEdit(true);
   const handleShowDelete = () => setShowDelete(true);
-
+/* ----------------------------------------- */
+  
+ /* ------------HANDLE EDIT SUBMIT------------------ */  
   const handleEditCourse = (e) => {
     const axios = require("axios");
 
@@ -78,12 +82,19 @@ const Course = () => {
     window.location.reload(false);
   };
 
+ /* ----------------------------------------- */
+
+   /* -----------HANDLE DELETE COURSE----------------- */
+
   const handleDeleteCourse = () => {
     const axios = require("axios");
 
     axios.delete(`${API}/courses/${id}`);
     history.push("/courses");
   };
+   /* ----------------------------------------- */
+
+   /* ---------EDIT FIELD---------------- */
 
   const handleUpdate = (e) => {
     let name = e.target.name;
@@ -91,14 +102,14 @@ const Course = () => {
     setCourse({
       ...course,
       [name]: value,
-      price: {
-        normal: price.normal,
-        early_bird: price.early_bird,
-      },
+     
     });
 
  
   };
+   /* ----------------------------------------- */
+
+    /* -------------EDIT BOOKABLE---------------- */
 
  const ckboxHandle = (e) => {
   
@@ -108,19 +119,24 @@ const Course = () => {
      ...course,
      [name]: value,
    });
- };
+  };
+/* ---------------------------------------------- */
+  
+/* -------------------EDIT INSTRUCTORS---------------------- */
   
  const handleInstructors = (e) => {
-  const value = e.target.value;
-    if (instructors.includes(value)) {
+  const selected = e.target.value;
+    if (instructors.includes(selected)) {
       setInstructors(
-        instructors.filter((instructors) => instructors !== value)
+        instructors.filter((instructors) => instructors !== selected)
       );
     } else {
-      setInstructors([...instructors, value]);
+      setInstructors([...instructors, selected]);
     }
   };
-
+/* -------------------------------------------------------- */
+  
+ /* ---------------------EDIT DATES-------------------- */
   const handleDateUpdate = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -130,7 +146,8 @@ const Course = () => {
       [name]: value,
     });
   };
-
+ /* --------------------------------------------------- */
+ /* ----------------------EDIT PRICES------------------- */
   const handlePriceUpdate = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -140,7 +157,9 @@ const Course = () => {
       [name]: value,
     });
   };
-
+/* ----------------------------------------------------- */
+  
+ /* --------------------GET COURSES--------------------- */
   const axios = require("axios");
   useEffect(() => {
     if (course.length === 0) {
@@ -166,7 +185,8 @@ const Course = () => {
         });
     }
   }, []);
-
+ /* --------------------------------------------------------- */
+  /* ------------------GET INSTRUCTORS----------------------- */
   useEffect(() => {
     axios
       .get(`${API}/instructors`)
@@ -183,7 +203,7 @@ const Course = () => {
         // always executed
       });
   }, []);
-
+ /* --------------------------------------------------- */
   
 
   return (
@@ -193,7 +213,7 @@ const Course = () => {
           <CustomNavbar />
         </Col>
       </Row>
-      {/* ----------------------------------COURSE INFO----------------------- */}
+      {/* ---------------------COURSE INFO----------------------- */}
       <Row>
         <Col>
           <h1>{updateCourse.title}</h1>
